@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shawn M. Crowley's Daily Dashboard</title>
+    
+  <link rel="icon" href="icons/favicon.svg" sizes="48x48">
+   
+
+  <!-- Bootstrap CSS from CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Custom styles (must be loaded after vendor CSS) -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="page-overlay" aria-hidden="true"></div>
+
+  <!-- Weather (top center) -->
+  <div id="weatherTop" class="weather-top text-center">
+    <div class="d-flex align-items-center justify-content-center gap-2">
+      <div id="weatherIcon" aria-hidden="true">🌙</div>
+      <div id="mini-weather" class="fw-bold">--°</div>
+    </div>
+    <div id="mini-location">—</div>
+  </div>
+
+  <!-- Center content: date, big clock + tagline -->
+  <main class="center-stage">
+    <div id="mini-date">—</div>
+    <div class="clock" id="clock">--:-- <span class="ampm">AM</span></div>
+    <h2 class="tagline" id="tagline">Strategy, Execution, and Metrics</h2>
+    
+    <!-- Administrative Links -->
+    <div id="adminLinks" class="admin-links mt-3">
+      <div class="d-flex flex-wrap gap-2 justify-content-center">
+        <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy Dashboard</a>
+        <a href="http://localhost:5050" class="btn btn-sm btn-outline-light" target="_blank">Postgres Admin Console</a>
+        <a href="http://localhost:8080" class="btn btn-sm btn-outline-light" target="_blank">WebUI for LLM</a>
+        <a href="https://localhost" class="btn btn-sm btn-outline-light" target="_blank">Main Application Dashboard</a>
+        <a href="https://myapps.microsoft.com/" class="btn btn-sm btn-outline-light" target="_blank">Microsoft Applications</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom-centered combined panel: To-Do (left) and RSS (right) -->
+  <div id="bottomPanel" class="bottom-panel d-flex align-items-start justify-content-between" role="region" aria-label="Tasks and feeds">
+    <div class="panel-section todo-section">
+      <div class="d-flex align-items-center mb-1">
+        <h6 class="mb-0">To‑Do</h6>
+        <small id="todoCount" class="small ms-auto">0</small>
+      </div>
+
+      <div class="d-flex mb-2 gap-2">
+        <input id="todoInput" class="form-control form-control-sm" placeholder="Add a task and press Enter" aria-label="Add task">
+        <button id="addTodo" class="btn btn-success btn-sm" type="button" title="Add task"><i class="bi bi-plus-lg"></i></button>
+      </div>
+
+      <ul id="todoList" class="list-group list-group-flush mb-1 todo-list"></ul>
+
+      <div class="d-flex gap-2 mt-2">
+        <button id="clearCompleted" class="btn btn-outline-light btn-sm">Clear completed</button>
+        <button id="toggleDoneView" class="btn btn-outline-light btn-sm ms-auto">Hide completed</button>
+      </div>
+    </div>
+
+    <div class="panel-divider d-none d-md-block"></div>
+
+    <div class="panel-section rss-section">
+      <div class="d-flex align-items-center mb-1">
+        <h6 class="mb-0">RSS</h6>
+        <small id="feedCount" class="small ms-auto">0</small>
+      </div>
+
+      <div class="d-flex mb-2 gap-2">
+        <input id="rssUrl" class="form-control form-control-sm" placeholder="Add RSS Feed URL" aria-label="Feed URL">
+        <button id="addRss" class="btn btn-sm" type="button" title="Add feed"><i class="bi bi-plus-lg"></i></button>
+      </div>
+
+      <!-- small note area used to show when a proxy fallback was used / errors -->
+      <!-- <div id="feedNote" class="small text-muted mb-2">Default feed: https://www.makeuseof.com/feed/</div> -->
+
+      <!-- RSS list: article items with thumbnail/title/author/date/excerpt -->
+      <ul id="rssList" class="rss-list list-group list-group-flush"></ul>
+
+      <!-- <div class="mt-2 text-muted small w-100 text-center">Note: some feeds block client fetches (CORS); a proxy fallback is used.</div> -->
+    </div>
+  </div>
+
+  <!-- <footer class="footer-note text-center text-white small">
+    <div id="attribution">Made for personal use — lightweight, responsive.</div>
+  </footer> -->
+
+  <!-- Bootstrap JS from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous" defer></script>
+
+  <!-- App script -->
+  <script src="main.js" defer></script>
+</body>
+</html>

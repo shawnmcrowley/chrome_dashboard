@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Shawn M. Crowley's Dashboard",
+  "version": "0.3",
+  "description": "Minimal focused new tab: centered clock + weather, bottom-centered To-Do & RSS panels.",
+  
+ "icons": {
+  "16": "icons/favicon.svg",
+  "48": "icons/favicon.svg",
+  "128": "icons/favicon.svg"
+},
+"action": {
+    "default_title": "Shawn M. Crowley",
+    "default_icon": {
+      "16": "icons/favicon.svg",
+      "48": "icons/favicon.svg"
+    },
+    "default_popup": "popup.html"
+  },
+  
+    "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+   
+  "permissions": [
+    "storage"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https: https://api.openweathermap.org https://ipapi.co https://ipinfo.io;"
+  }
+}

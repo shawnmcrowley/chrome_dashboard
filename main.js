@@ -1,0 +1,287 @@
+/**
+ * main.js — Updated: fixed-location weather (New Delhi), default feed, RSS rendering with image/title/author/date,
+ * proxy fallback for CORS, constrained thumbnails, and UI wiring (To-Do + RSS).
+ *
+ * Notes:
+ * - Ensure vendor/bootstrap and vendor/bootstrap-icons are stored locally in vendor/
+ * - Manifest must allow connect-src https: if you want to fetch arbitrary feeds
+ */
+
+/* ====== CONFIG ====== */
+const OPENWEATHER_KEY = '0e172f624f321a623e5f680bedf0c995'; // optional: set here for quick testing
+const DEFAULT_FEEDS = ['https://www.makeuseof.com/feed/'];
+
+/* ====== storage helpers ====== */
+const storageGet = async (key) => {
+  if (window.chrome?.storage?.sync) {
+    return new Promise(res => chrome.storage.sync.get(key, data => res(data[key])));
+  }
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch { return null; }
+};
+const storageSet = async (key, value) => {
+  if (window.chrome?.storage?.sync) {
+    return new Promise(res => chrome.storage.sync.set({ [key]: value }, res));
+  }
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.warn('storageSet', e); }
+};
+
+/* ====== DOM helper ====== */
+const $ = (id) => document.getElementById(id);
+
+/* ====== state ====== */
+const state = { todo: [], feeds: [], weather: null, showCompleted: false };
+
+/* ====== logging ====== */
+const log = { d: (...a)=>console.debug('app:',...a), i:(...a)=>console.info('app:',...a), w:(...a)=>console.warn('app:',...a), e:(...a)=>console.error('app:',...a) };
+
+/* ====== CLOCK ====== */
+function formatClockParts(date) {
+  const hh = date.getHours();
+  const h12 = ((hh + 11) % 12) + 1;
+  const mm = String(date.getMinutes()).padStart(2,'0');
+  const ampm = hh >= 12 ? 'PM' : 'AM';
+  return { time: `${String(h12).padStart(2,'0')}:${mm}`, ampm };
+}
+function updateClock() {
+  try {
+    const now = new Date();
+    const parts = formatClockParts(now);
+    const clockEl = $('clock');
+    if (clockEl) clockEl.innerHTML = `${parts.time} <span class="ampm">${parts.ampm}</span>`;
+    const miniDateEl = $('mini-date');
+    if (miniDateEl) miniDateEl.textContent = now.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+  } catch (e) { log.e('updateClock', e); }
+}
+let _clockTimer = null;
+function startClock() { if (_clockTimer) clearInterval(_clockTimer); updateClock(); _clockTimer = setInterval(updateClock, 1000); }
+
+/* ====== WEATHER (fixed location) ====== */
+async function fetchWeatherForCity(city='Wilmington, US') {
+  let key = OPENWEATHER_KEY || (await storageGet('openweather_key')) || '';
+  key = (typeof key === 'string') ? key.trim() : key;
+  if (!key) return { error: 'no_key' };
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${encodeURIComponent(key)}`;
+  try {
+    const res = await fetch(url);
+    const txt = await res.text().catch(()=>'');
+    if (!res.ok) return { error:true, status:res.status, body:txt };
+    return JSON.parse(txt);
+  } catch (e) { log.e('fetchWeatherForCity', e); return null; }
+}
+function mapIcon(id, icon) {
+  if (!id) return '🌤️';
+  if (icon?.endsWith('d')) {
+    if (id >= 200 && id < 600) return '⛈️';
+    if (id >= 600 && id < 700) return '🌨️';
+    if (id === 800) return '☀️';
+    return '🌤️';
+  } else return '🌙';
+}
+function renderWeather(data) {
+  const miniWeatherEl = $('mini-weather'), miniLocationEl = $('mini-location'), weatherIconEl = $('weatherIcon');
+  if (!miniWeatherEl) return;
+  if (!data || data.error) {
+    miniWeatherEl.textContent = '--°';
+    miniLocationEl.textContent = data && data.error === 'no_key' ? 'No API key' : '—';
+    weatherIconEl && (weatherIconEl.textContent = '🌙');
+    return;
+  }
+  miniWeatherEl.textContent = `${Math.round(data.main.temp)}°`;
+  miniLocationEl.textContent = data.name || '—';
+  weatherIconEl && (weatherIconEl.textContent = mapIcon(data.weather?.[0]?.id, data.weather?.[0]?.icon));
+}
+async function loadWeather() {
+  renderWeather(null);
+  const city = 'New Delhi';
+  const data = await fetchWeatherForCity(city);
+  if (data && !data.error) { state.weather = data; renderWeather(data); await storageSet('lastWeather', data); return; }
+  const last = await storageGet('lastWeather');
+  if (last) renderWeather(last);
+}
+
+/* ====== RSS helpers & rendering (unchanged from earlier) ====== */
+function extractImageFromItem(item) {
+  try {
+    const encl = item.querySelector('enclosure[url][type^="image"], enclosure[url]');
+    if (encl && encl.getAttribute('url')) return encl.getAttribute('url');
+    const media = item.querySelector('media\\:content, content, media\\:thumbnail, thumbnail');
+    if (media && media.getAttribute && media.getAttribute('url')) return media.getAttribute('url');
+    const contentElem = item.querySelector('content\\:encoded, encoded, description') || item.querySelector('description');
+    if (contentElem) {
+      const raw = contentElem.textContent || contentElem.innerHTML || '';
+      const m = raw.match(/<img[^>]+src=["']([^"']+)["']/i);
+      if (m && m[1]) return m[1];
+    }
+    const img = item.querySelector('img');
+    if (img && img.src) return img.src;
+    return null;
+  } catch (e) {
+    log.w('extractImageFromItem', e);
+    return null;
+  }
+}
+function extractAuthorFromItem(item) {
+  try {
+    const authorElem = item.querySelector('author, dc\\:creator, creator');
+    if (authorElem && authorElem.textContent) return authorElem.textContent.trim();
+    const authName = item.querySelector('author > name');
+    if (authName && authName.textContent) return authName.textContent.trim();
+    return '';
+  } catch (e) { return ''; }
+}
+function parseFeedXmlToItems(xmlText, feedUrl) {
+  try {
+    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+    const items = Array.from(doc.querySelectorAll('item')).slice(0, 8).map(item => {
+      const title = item.querySelector('title')?.textContent?.trim() || '';
+      const link = item.querySelector('link')?.textContent?.trim() || item.querySelector('guid')?.textContent?.trim() || feedUrl;
+      const pubDateRaw = item.querySelector('pubDate')?.textContent || item.querySelector('date')?.textContent || '';
+      const pubDate = pubDateRaw ? new Date(pubDateRaw) : null;
+      const author = extractAuthorFromItem(item) || '';
+      const image = extractImageFromItem(item) || '';
+      const desc = item.querySelector('description')?.textContent || item.querySelector('content\\:encoded')?.textContent || '';
+      const excerpt = desc ? desc.replace(/<[^>]+>/g, '').trim().slice(0, 220) : '';
+      return { title, link, pubDate, author, image, excerpt };
+    });
+    return items;
+  } catch (e) {
+    log.w('parseFeedXmlToItems', e);
+    return [];
+  }
+}
+async function fetchAndParseFeed(url) {
+  const tryDirect = async () => {
+    const res = await fetch(url, { method: 'GET', credentials: 'omit' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const txt = await res.text();
+    const parsed = parseFeedXmlToItems(txt, url);
+    if (parsed.length) return parsed;
+    throw new Error('no-items-parsed');
+  };
+  const tryProxy = async () => {
+    const proxy = 'https://api.allorigins.win/raw?url=';
+    const proxyUrl = proxy + encodeURIComponent(url);
+    const pres = await fetch(proxyUrl, { method: 'GET' });
+    if (!pres.ok) throw new Error(`proxy HTTP ${pres.status}`);
+    const ptxt = await pres.text();
+    const parsed = parseFeedXmlToItems(ptxt, url);
+    return parsed;
+  };
+  try {
+    return await tryDirect();
+  } catch (err) {
+    log.w('Direct fetch failed, trying proxy for', url, err);
+    try {
+      const items = await tryProxy();
+      const noteEl = $('feedNote');
+      if (noteEl) {
+        noteEl.textContent = 'Proxy used to fetch feeds (CORS blocked).';
+        setTimeout(() => { if (noteEl) noteEl.textContent = 'Default feed: https://www.makeuseof.com/feed/'; }, 7000);
+      }
+      return items;
+    } catch (perr) {
+      log.w('Proxy fetch also failed for', url, perr);
+      return [];
+    }
+  }
+}
+async function renderFeeds() {
+  const rssListEl = $('rssList');
+  const feedCountEl = $('feedCount');
+  if (!rssListEl) return;
+  rssListEl.innerHTML = '';
+  feedCountEl && (feedCountEl.textContent = `${state.feeds.length}`);
+  if (!state.feeds.length) {
+    const li = document.createElement('li'); li.className='list-group-item text-muted'; li.textContent='No feeds yet — add one.'; rssListEl.appendChild(li); return;
+  }
+  for (const feedUrl of state.feeds) {
+    const header = document.createElement('li'); header.className='list-group-item'; header.style.padding='6px 8px'; header.innerHTML = `<strong>${feedUrl}</strong>`; rssListEl.appendChild(header);
+    const items = await fetchAndParseFeed(feedUrl);
+    if (!items.length) {
+      const li = document.createElement('li'); li.className='list-group-item text-muted'; li.textContent='Failed to fetch (CORS or invalid feed).'; rssListEl.appendChild(li); continue;
+    }
+    items.slice(0,6).forEach(it => {
+      const li = document.createElement('li'); li.className='rss-item';
+      const thumb = document.createElement('div'); thumb.className='rss-thumb';
+      if (it.image) {
+        const img = document.createElement('img'); img.src = it.image; img.alt = it.title || 'thumbnail';
+        img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+        img.onerror = () => { img.style.display='none'; thumb.style.minWidth='0'; };
+        thumb.appendChild(img);
+      } else {
+        thumb.innerHTML = '<svg width="100%" height="100%" viewBox="0 0 4 3" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="3" fill="#0b1116"/></svg>';
+      }
+      const body = document.createElement('div'); body.className='rss-body';
+      const a = document.createElement('a'); a.href = it.link || feedUrl; a.target = '_blank'; a.rel='noopener'; a.className='rss-title'; a.textContent = it.title || it.link || 'Untitled';
+      const meta = document.createElement('div'); meta.className='rss-meta'; const authorPart = it.author ? `${it.author}` : ''; const datePart = it.pubDate ? (it.pubDate.toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })) : ''; meta.textContent = [authorPart, datePart].filter(Boolean).join(' • ');
+      const excerpt = document.createElement('div'); excerpt.className='rss-excerpt'; excerpt.textContent = it.excerpt || '';
+      body.appendChild(a); body.appendChild(meta); if (it.excerpt) body.appendChild(excerpt);
+      li.appendChild(thumb); li.appendChild(body); rssListEl.appendChild(li);
+    });
+  }
+}
+
+/* ====== To-do list rendering & events ====== */
+function createTodoNode(task, idx) {
+  const li = document.createElement('li'); li.className='list-group-item'; li.dataset.idx=idx;
+  const handle = document.createElement('span'); handle.className='todo-handle me-2'; handle.innerHTML = '<i class="bi bi-grip-vertical"></i>'; handle.title='Drag to reorder';
+  const chk = document.createElement('input'); chk.type='checkbox'; chk.className='form-check-input me-2'; chk.checked=!!task.done; chk.addEventListener('change', async ()=>{ state.todo[idx].done = chk.checked; await storageSet('todo', state.todo); renderTodos(); });
+  const text = document.createElement('div'); text.className='todo-text'; text.textContent = task.text; if (task.done) text.classList.add('todo-done');
+  const meta = document.createElement('div'); meta.className='todo-meta ms-2 text-muted'; meta.textContent = new Date(task.created).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const del = document.createElement('button'); del.className='btn btn-sm btn-outline-light ms-2'; del.innerHTML = '<i class="bi bi-x-lg"></i>'; del.title='Delete'; del.addEventListener('click', async ()=>{ state.todo.splice(idx,1); await storageSet('todo', state.todo); renderTodos(); });
+  li.draggable = true;
+  li.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', idx); li.classList.add('dragging'); });
+  li.addEventListener('dragend', ()=>li.classList.remove('dragging'));
+  li.addEventListener('dragover', e=>{ e.preventDefault(); li.classList.add('dragover'); });
+  li.addEventListener('dragleave', ()=>li.classList.remove('dragover'));
+  li.addEventListener('drop', async (e)=>{ e.preventDefault(); const from = Number(e.dataTransfer.getData('text/plain')); const to = Array.from(todoListEl.children).indexOf(li); if (from===to) return; const [moved] = state.todo.splice(from,1); state.todo.splice(to,0,moved); await storageSet('todo', state.todo); renderTodos(); });
+  li.appendChild(handle); li.appendChild(chk); li.appendChild(text); li.appendChild(meta); li.appendChild(del);
+  return li;
+}
+function renderTodos() {
+  try {
+    const todoListElLocal = $('todoList');
+    if (!todoListElLocal) return;
+    todoListElLocal.innerHTML = '';
+    const filtered = state.showCompleted ? state.todo : state.todo.filter(t=>!t.done);
+    filtered.forEach(t => { const realIdx = state.todo.indexOf(t); todoListElLocal.appendChild(createTodoNode(t, realIdx)); });
+    const todoCountEl = $('todoCount'); if (todoCountEl) todoCountEl.textContent = `${state.todo.filter(t=>!t.done).length}`;
+  } catch (e) { log.e('renderTodos error', e); }
+}
+
+/* ====== UI wiring ====== */
+function wireUiEvents() {
+  try {
+    const addTodoBtn = $('addTodo'), todoInput = $('todoInput');
+    if (addTodoBtn && todoInput) {
+      addTodoBtn.addEventListener('click', async ()=>{ const text = todoInput.value.trim(); if (!text) return; state.todo.unshift({text, done:false, created:Date.now()}); todoInput.value=''; await storageSet('todo', state.todo); renderTodos(); });
+      todoInput.addEventListener('keydown', e=>{ if (e.key==='Enter') addTodoBtn.click(); });
+    }
+    const clearBtn = $('clearCompleted'); if (clearBtn) clearBtn.addEventListener('click', async ()=>{ state.todo = state.todo.filter(t=>!t.done); await storageSet('todo', state.todo); renderTodos(); });
+    const toggleDoneBtn = $('toggleDoneView'); if (toggleDoneBtn) toggleDoneBtn.addEventListener('click', ()=>{ state.showCompleted = !state.showCompleted; toggleDoneBtn.classList.toggle('active', state.showCompleted); toggleDoneBtn.textContent = state.showCompleted ? 'Show active' : 'Hide completed'; renderTodos(); });
+    const addRssBtn = $('addRss'), rssUrlInput = $('rssUrl'); if (addRssBtn && rssUrlInput) {
+      addRssBtn.addEventListener('click', async ()=>{ const url = rssUrlInput.value.trim(); if (!url) return; if (!state.feeds.includes(url)) { state.feeds.unshift(url); await storageSet('feeds', state.feeds); rssUrlInput.value=''; await renderFeeds(); }});
+      rssUrlInput.addEventListener('keydown', e=>{ if (e.key==='Enter') addRssBtn.click(); });
+    }
+  } catch (e) { log.e('wireUiEvents error', e); }
+}
+
+/* ====== INIT ====== */
+async function initApp() {
+  try {
+    state.todo = (await storageGet('todo')) || [];
+    state.feeds = (await storageGet('feeds')) || DEFAULT_FEEDS.slice();
+    startClock();
+    wireUiEvents();
+    renderTodos();
+    await renderFeeds();
+    await loadWeather();
+  } catch (e) { log.e('initApp error', e); }
+}
+document.addEventListener('DOMContentLoaded', ()=>{ try { initApp(); } catch (e) { log.e('DOMContentLoaded', e); } });
+
+/* Expose for debug */
+window.appState = state;
+window.loadWeather = loadWeather;
+window.renderFeeds = renderFeeds;
+window.updateClock = updateClock;

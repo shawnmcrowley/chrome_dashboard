@@ -1,0 +1,294 @@
+:root{
+  --bg-1: #040607;
+  --bg-2: #071017;
+  --panel-border: rgba(255,255,255,0.04);
+  --muted: #9fb0bb;
+  --text: #eef6f8;
+  --accent-teal: #60d9c9;
+  --accent-blue: #3aa6ff;
+  --shadow-strong: rgba(0,0,0,0.7);
+  --clock-size-desktop: 6.5rem;
+  --clock-size-mobile: 4.0rem;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color-scheme: dark;
+}
+
+/* ---------- Page background ---------- */
+html,body { height:100%; margin:0; }
+body{
+  min-height:100vh;
+  background-image:
+    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  color: var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow: hidden;
+}
+
+/* subtle vignette */
+#page-overlay{
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.16) 50%, rgba(0,0,0,0.32) 100%);
+}
+
+/* ---------- Top weather ---------- */
+.weather-top{
+  position:fixed;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:140;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  pointer-events:none;
+  text-align:center;
+}
+#mini-weather { font-weight:700; font-size:15px; padding:4px 8px; border-radius:8px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008)); }
+#mini-location { font-size:12px; color:var(--muted); }
+
+/* ---------- Center stage (clock & date & tagline) ---------- */
+/* Put the center-stage above background but below the bottom panel so it won't cover panels */
+.center-stage{
+  position: absolute;
+  left: 50%;
+  top: 18%; /* closer to top */
+  transform: translate(-50%, -18%);
+  z-index: 40; /* intentionally lower than bottom-panel */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  pointer-events: none; /* don't intercept clicks */
+  width:100%;
+  box-sizing: border-box;
+  padding: 0 20px;
+}
+
+/* date above clock */
+#mini-date {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.65);
+  z-index: 42;
+}
+
+/* large clock + AM/PM (kept large but reduced slightly) */
+.clock{
+  font-size: var(--clock-size-desktop);
+  font-weight: 900;
+  line-height: 0.92;
+  margin: 0;
+  color: #ffffff;
+  text-shadow: 0 18px 40px rgba(0,0,0,0.65);
+  letter-spacing: -2px;
+  z-index: 42;
+  white-space: nowrap;
+}
+.clock .ampm {
+  display:inline-block;
+  margin-left:12px;
+  font-size:0.28em;
+  font-weight:900;
+  text-transform:uppercase;
+  padding:6px 10px;
+  border-radius:8px;
+  background: rgba(255,255,255,0.02);
+  color:#ffffff;
+  vertical-align: middle;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+}
+
+/* tagline (allow pointer events for small interactions) */
+.tagline {
+  margin-top: 10px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #f6fbfb;
+  text-shadow: 0 8px 22px rgba(0,0,0,0.6);
+  z-index: 42;
+  pointer-events: auto;
+}
+
+/* admin links */
+.admin-links {
+  pointer-events: auto !important;
+  z-index: 42;
+}
+.admin-links .d-flex {
+  gap: 16px !important;
+}
+.admin-links a {
+  pointer-events: auto !important;
+  text-decoration: none !important;
+}
+
+/* ---------- Bottom panel (To-Do / RSS) ---------- */
+.bottom-panel {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 28px;
+  z-index: 200; /* make sure panels are above the clock */
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  width: calc(100% - 80px);
+  max-width: 1200px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border-radius: 14px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  padding: 20px;
+  box-sizing: border-box;
+  margin-top: -80px; /* pull panel closer to links */
+}
+
+/* panel sections */
+.panel-section {
+  background: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(255,255,255,0.02));
+  color: var(--text);
+  width: 48%;
+  min-width: 260px;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column; /* important: stack header, input, list, footer */
+  gap: 10px;
+  box-sizing: border-box;
+  max-height: 480px; /* ensure the whole panel has an upper bound */
+}
+
+/* divider (visual) */
+.panel-divider {
+  width:1px;
+  background: rgba(255,255,255,0.03);
+  height: 100%;
+  align-self: stretch;
+}
+
+/* ---------- Form controls & inputs (dark theme overrides) ---------- */
+.form-control, .form-control:focus {
+  background: rgba(255,255,255,0.02) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  box-shadow: none !important;
+}
+
+/* constrain placeholder color */
+.form-control::placeholder { color: rgba(234,246,243,0.45) !important; }
+
+/* Universal button styling */
+.btn, .btn-sm, .btn-outline-light, .btn-success, .btn-primary, #addRss, #addTodo, #clearCompleted, #toggleDoneView {
+  background: rgba(255,255,255,0.15) !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
+  color: #ffffff !important;
+  padding: 8px 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+.btn:hover, .btn-sm:hover, .btn-outline-light:hover, .btn-success:hover, .btn-primary:hover, #addRss:hover, #addTodo:hover, #clearCompleted:hover, #toggleDoneView:hover {
+  background: rgba(255,255,255,0.25) !important;
+  border-color: rgba(255,255,255,0.35) !important;
+  color: #ffffff !important;
+}
+
+/* ---------- To-do list readability & scrollable area ---------- */
+/* Keep input and controls outside the scroll area; make the list itself scrollable */
+.todo-list {
+  background: transparent !important;
+  border-radius: 6px;
+  padding: 6px;
+  min-height: 56px;
+  max-height: 340px;    /* same max-height as RSS list for parity */
+  overflow-y: auto;     /* enable vertical scrolling when items exceed height */
+  box-sizing: border-box;
+}
+
+/* Ensure list-group items use readable colors */
+.list-group-item {
+  background: transparent !important;
+  border: none !important;
+  padding: 10px 8px !important;
+  color: var(--text) !important;
+}
+
+/* Todo item text readable */
+.todo-text {
+  color: var(--text) !important;
+  font-weight: 500;
+}
+
+/* Meta/time for todo */
+.todo-meta { color: var(--muted) !important; font-size: 12px; }
+
+/* Completed style */
+.todo-done { text-decoration: line-through; opacity: 0.6; color: rgba(234,246,243,0.7) !important; }
+
+/* Ensure checkbox is visible on dark background */
+.form-check-input {
+  background-color: transparent !important;
+}
+
+/* Keep footer controls (clear/hide) visible and pinned below the scroll area */
+.panel-section > .controls-placeholder {
+  margin-top: auto; /* pushes into footer area if used */
+}
+
+/* ---------- RSS list (constrain thumbnails and height) ---------- */
+.rss-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 340px; /* same height as todo-list */
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.rss-item {
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:8px;
+  border-radius:8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.02);
+  box-sizing: border-box;
+}
+
+/* thumbnail */
+.rss-thumb { width:96px; height:64px; overflow:hidden; border-radius:6px; background:#0b1116; flex:0 0 96px; display:inline-flex; align-items:center; justify-content:center; }
+.rss-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+
+/* rss body */
+.rss-body { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.rss-title { font-weight:700; color:#ffffff; text-decoration:none; font-size:14px; }
+.rss-meta { color: var(--muted); font-size:12px; }
+.rss-excerpt { color: rgba(234,246,243,0.85); font-size:13px; line-height:1.3; }
+
+/* ensure list colors override bootstrap */
+.list-group-item, .rss-item, .todo-text, .rss-title { color: var(--text) !important; }
+
+/* ---------- Defensive: ensure clock doesn't intercept interactions ---------- */
+.center-stage { pointer-events: none !important; }
+.center-stage .tagline, .center-stage a, .center-stage .admin-links, .center-stage .admin-links * { pointer-events: auto !important; }
+
+/* ---------- Responsive adjustments ---------- */
+@media (max-width: 900px) {
+  .bottom-panel { flex-direction: column; width: calc(100% - 40px); padding: 12px; }
+  .panel-section { width:100%; }
+  .rss-list { max-height: 260px; }
+  .todo-list { max-height: 260px; }
+  .clock { font-size: var(--clock-size-mobile); }
+  .clock .ampm { font-size: .38em; padding: 5px 8px; margin-left: 8px; }
+  #mini-date { font-size: 13px; margin-bottom: 6px; }
+}
