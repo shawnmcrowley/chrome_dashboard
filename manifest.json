@@ -1,19 +1,20 @@
 {
   "manifest_version": 3,
   "name": "Shawn M. Crowley's Dashboard",
-  "version": "0.3",
-  "description": "Minimal focused new tab: centered clock + weather, bottom-centered To-Do & RSS panels.",
+  "version": "1.0.0",
+  "description": "Personal Dashboard for Shawn M. Crowley that includes weather, time, and location information as well as useful daily links and consoles",
   
  "icons": {
-  "16": "icons/favicon.svg",
-  "48": "icons/favicon.svg",
-  "128": "icons/favicon.svg"
+  "16": "icons/16x16.png",
+  "48": "icons/48x48.png",
+  "128": "icons/128x128.png"
 },
 "action": {
     "default_title": "Shawn M. Crowley",
     "default_icon": {
-      "16": "icons/favicon.svg",
-      "48": "icons/favicon.svg"
+      "16": "icons/16x16.png",
+      "48": "icons/48x48.png",
+      "128":"icons/128x128.png"
     },
     "default_popup": "popup.html"
   },
