@@ -4,19 +4,52 @@
   <meta charset="UTF-8">
   <title>Dashboard Panel</title>
   <link rel="stylesheet" href="styles.css">
-
+  <style>
+    body {
+      padding: 20px;
+      background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 280px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--text);
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 16px;
+      width: 100%;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none !important;
+      border-radius: 8px !important;
+      margin-bottom: 8px;
+      padding: 6px 12px !important;
+      font-size: 12px !important;
+    }
+  </style>
 </head>
 <body>
   <h1>Utility Panel</h1>
 
   <!-- ==================== Utilities ==================== -->
   <section class="card">
-   <div class="d-flex flex-wrap gap-2 justify-content-left">
-        <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy Dashboard</a><p>
-        <a href="http://localhost:5050" class="btn btn-sm btn-outline-light" target="_blank">Postgres Admin Console</a><p>
-        <a href="http://localhost:8080" class="btn btn-sm btn-outline-light" target="_blank">WebUI for LLM</a><p>
-        <a href="http://localhost:5678" class="btn btn-sm btn-outline-light" target="_blank">N8N Workflow</a><p>
-        <a href="https://localhost" class="btn btn-sm btn-outline-light" target="_blank">Main Application Dashboard</a><p>
+   <div class="d-flex flex-column gap-2">
+        <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy Dashboard</a>
+        <a href="http://localhost:5050" class="btn btn-sm btn-outline-light" target="_blank">Postgres Admin Console</a>
+        <a href="http://localhost:8080" class="btn btn-sm btn-outline-light" target="_blank">WebUI for LLM</a>
+        <a href="http://localhost:5678" class="btn btn-sm btn-outline-light" target="_blank">N8N Workflow</a>
+        <a href="https://localhost" class="btn btn-sm btn-outline-light" target="_blank">Main Application Dashboard</a>
         <a href="https://myapps.microsoft.com/" class="btn btn-sm btn-outline-light" target="_blank">Microsoft Applications</a>
       </div>
   </section>

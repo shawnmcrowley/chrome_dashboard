@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Shawn M. Crowley's Dashboard",
+  "name": "Daily Dashboard",
   "version": "1.0.0",
-  "description": "Personal Dashboard for Shawn M. Crowley that includes weather, time, and location information as well as useful daily links and consoles",
+  "description": "Personal Dashboard for Shawn M. Crowley that includes weather, time, and location information. The side panel provides a more detailed view of the dashboard.",
   
  "icons": {
   "16": "icons/16x16.png",
@@ -10,16 +10,16 @@
   "128": "icons/128x128.png"
 },
 "action": {
-    "default_title": "Shawn M. Crowley",
+    "default_title": "Utility Panel",
     "default_icon": {
       "16": "icons/16x16.png",
       "48": "icons/48x48.png",
       "128":"icons/128x128.png"
-    },
-    "default_popup": "popup.html",
-    "side_panel": {
-    "default_path": "panel.html"
     }
+  },
+  
+  "side_panel": {
+    "default_path": "panel.html"
   },
   
     "chrome_url_overrides": {
@@ -29,19 +29,22 @@
   "permissions": [
     "storage", 
     "scripting",
-    "sidePanel"
+    "sidePanel",
+    "contextMenus"
   ],
 
   "host_permissions": [
     "https://api.openweathermap.org/*",
-    "https://localhost:2375/*"
+    "https://www.alphavantage.co/*",
+    "https://localhost:2375/*",
+    "<all_urls>"
   ],
   "background": {
-    "service_worker": "service_worker.js"
+    "service_worker": "service-worker.js"
   },
 
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https: https://api.openweathermap.org https://ipapi.co https://ipinfo.io;"
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https: https://api.openweathermap.org https://www.alphavantage.co https://ipapi.co https://ipinfo.io;"
   },
   "minimum_chrome_version": "110"
 }

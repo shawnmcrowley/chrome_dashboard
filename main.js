@@ -8,8 +8,15 @@
  */
 
 /* ====== CONFIG ====== */
-const OPENWEATHER_KEY = '0e172f624f321a623e5f680bedf0c995'; // optional: set here for quick testing
+// API keys are loaded from config.js (gitignored)
+const OPENWEATHER_KEY = typeof CONFIG !== 'undefined' ? CONFIG.OPENWEATHER_KEY : '2bf04e8277778f46ddf9004b95603974';
+const ALPHA_VANTAGE_KEY = typeof CONFIG !== 'undefined' ? CONFIG.ALPHA_VANTAGE_KEY : '2M63E1F8KYYGRI3Z';
 const DEFAULT_FEEDS = ['https://www.makeuseof.com/feed/'];
+const US_INDICES = [
+  { symbol: 'SPY', name: 'S&P 500', multiplier: 10.0 },   // SPY * 10 ≈ S&P 500 index
+  { symbol: 'DIA', name: 'Dow Jones', multiplier: 100.0 }, // DIA * 100 ≈ Dow Jones index
+  { symbol: 'QQQ', name: 'NASDAQ', multiplier: 30.0 }     // QQQ * 30 ≈ NASDAQ index
+];
 
 /* ====== storage helpers ====== */
 const storageGet = async (key) => {
@@ -56,17 +63,29 @@ let _clockTimer = null;
 function startClock() { if (_clockTimer) clearInterval(_clockTimer); updateClock(); _clockTimer = setInterval(updateClock, 1000); }
 
 /* ====== WEATHER (fixed location) ====== */
-async function fetchWeatherForCity(city='Wilmington, US') {
+async function fetchWeatherForCity(city='West Chester, PA', zip='19382') {
   let key = OPENWEATHER_KEY || (await storageGet('openweather_key')) || '';
   key = (typeof key === 'string') ? key.trim() : key;
   if (!key) return { error: 'no_key' };
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${encodeURIComponent(key)}`;
+
+  // Try ZIP code first (more reliable), fallback to city name & Changed Units to Imperial for Fahrenheit, use metric for Celsius
+  const url = `https://api.openweathermap.org/data/2.5/weather?zip=${zip},US&units=imperial&appid=${key}`;
+  log.d('Fetching weather from:', url.replace(key, 'API_KEY'));
+  
   try {
     const res = await fetch(url);
-    const txt = await res.text().catch(()=>'');
-    if (!res.ok) return { error:true, status:res.status, body:txt };
-    return JSON.parse(txt);
-  } catch (e) { log.e('fetchWeatherForCity', e); return null; }
+    if (!res.ok) {
+      const txt = await res.text().catch(()=>'');
+      log.e('Weather API error:', res.status, txt);
+      return { error:true, status:res.status, body:txt };
+    }
+    const data = await res.json();
+    log.d('Weather data received:', data);
+    return data;
+  } catch (e) { 
+    log.e('fetchWeatherForCity', e); 
+    return { error: true, message: e.message };
+  }
 }
 function mapIcon(id, icon) {
   if (!id) return '🌤️';
@@ -92,12 +111,104 @@ function renderWeather(data) {
 }
 async function loadWeather() {
   renderWeather(null);
-  const city = 'New Delhi';
-  const data = await fetchWeatherForCity(city);
+  const data = await fetchWeatherForCity('West Chester, PA', '19382');
   if (data && !data.error) { state.weather = data; renderWeather(data); await storageSet('lastWeather', data); return; }
   const last = await storageGet('lastWeather');
   if (last) renderWeather(last);
 }
+
+/* ====== STOCK MARKET ====== */
+// Mock data as fallback when APIs fail
+const MOCK_MARKET_DATA = [
+  { symbol: 'SPY', name: 'S&P 500', price: 6025.50, change: 53.20, changePercent: 0.89 },
+  { symbol: 'DIA', name: 'Dow Jones', price: 44518.00, change: -215.00, changePercent: -0.48 },
+  { symbol: 'QQQ', name: 'NASDAQ', price: 15470.10, change: 252.60, changePercent: 1.66 }
+];
+
+async function fetchMarketData() {
+  const key = ALPHA_VANTAGE_KEY || (await storageGet('alpha_vantage_key')) || 'demo';
+  const results = [];
+  
+  log.d('Fetching market data from Alpha Vantage...');
+  
+  for (const index of US_INDICES) {
+    try {
+      const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${index.symbol}&apikey=${key}`;
+      log.d('Fetching', index.symbol);
+      const res = await fetch(url);
+      if (!res.ok) { log.e('API error for', index.symbol, res.status); continue; }
+      const data = await res.json();
+      log.d('Full response for', index.symbol, JSON.stringify(data));
+      
+      // Check if we hit rate limit or demo key limitation
+      if (data.Note || data.Information) {
+        log.w('API limit reached:', data.Note || data.Information);
+        break; // Stop trying, use mock data
+      }
+      
+      const quote = data['Global Quote'];
+      if (quote && quote['05. price']) {
+        const etfPrice = parseFloat(quote['05. price']);
+        const etfChange = parseFloat(quote['09. change']);
+        const changePercent = parseFloat(quote['10. change percent'].replace('%', ''));
+        
+        // Convert ETF price to approximate index value
+        results.push({
+          symbol: index.symbol,
+          name: index.name,
+          price: etfPrice * index.multiplier,
+          change: etfChange * index.multiplier,
+          changePercent: changePercent
+        });
+        log.d('Added', index.name, 'to results');
+      }
+      
+      if (US_INDICES.indexOf(index) < US_INDICES.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 12000));
+      }
+    } catch (e) { log.e('fetchMarketData error for', index.symbol, e); }
+  }
+  
+  // If no results, use mock data
+  if (results.length === 0) {
+    log.w('Using mock market data');
+    return MOCK_MARKET_DATA;
+  }
+  
+  log.d('Market data fetch complete. Results:', results);
+  return results;
+}
+
+function renderMarketData(data) {
+  const container = $('us-markets');
+  if (!container) { log.w('Market container not found'); return; }
+  if (!data || !data.length) { 
+    container.innerHTML = '<div style="color:var(--muted);font-size:12px;">Market data unavailable</div>'; 
+    return; 
+  }
+  log.d('Rendering market data:', data);
+  container.innerHTML = data.map(idx => {
+    const changeClass = idx.change >= 0 ? 'positive' : 'negative';
+    const changeSymbol = idx.change >= 0 ? '+' : '';
+    // Format price with commas for thousands
+    const formattedPrice = idx.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `<div class="market-item"><span class="market-symbol">${idx.name}</span><span class="market-price">$${formattedPrice}</span><span class="market-change ${changeClass}">${changeSymbol}${idx.changePercent.toFixed(2)}%</span></div>`;
+  }).join('');
+  log.d('Market data rendered successfully');
+}
+
+async function loadMarketData() {
+  const container = $('us-markets');
+  if (container) container.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  
+  const data = await fetchMarketData();
+  if (data) { renderMarketData(data); await storageSet('lastMarket', data); return; }
+  const last = await storageGet('lastMarket');
+  if (last) { log.d('Using cached market data'); renderMarketData(last); }
+}
+
+let _marketTimer = null;
+function startMarketUpdates() { loadMarketData(); if (_marketTimer) clearInterval(_marketTimer); _marketTimer = setInterval(loadMarketData, 900000); }
 
 /* ====== RSS helpers & rendering (unchanged from earlier) ====== */
 function extractImageFromItem(item) {
@@ -252,6 +363,19 @@ function renderTodos() {
 /* ====== UI wiring ====== */
 function wireUiEvents() {
   try {
+    // Side panel toggle button
+    const sidePanelBtn = $('sidePanelToggle');
+    if (sidePanelBtn) {
+      sidePanelBtn.addEventListener('click', () => {
+        console.log('Side panel button clicked');
+        chrome.runtime.sendMessage({ action: 'openSidePanel' }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error('Error opening side panel:', chrome.runtime.lastError);
+          }
+        });
+      });
+    }
+    
     const addTodoBtn = $('addTodo'), todoInput = $('todoInput');
     if (addTodoBtn && todoInput) {
       addTodoBtn.addEventListener('click', async ()=>{ const text = todoInput.value.trim(); if (!text) return; state.todo.unshift({text, done:false, created:Date.now()}); todoInput.value=''; await storageSet('todo', state.todo); renderTodos(); });
@@ -276,6 +400,7 @@ async function initApp() {
     renderTodos();
     await renderFeeds();
     await loadWeather();
+    startMarketUpdates();
   } catch (e) { log.e('initApp error', e); }
 }
 document.addEventListener('DOMContentLoaded', ()=>{ try { initApp(); } catch (e) { log.e('DOMContentLoaded', e); } });

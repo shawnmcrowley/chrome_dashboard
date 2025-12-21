@@ -18,8 +18,13 @@
   <div id="page-overlay" aria-hidden="true"></div>
 
   <!-- Side Panel -->
-   <iframe id="panel" src="panel.html" style="width: 250px; height: 100%; border-right: 1px solid #ccc; float:right;"></iframe>
+  <!-- <iframe id="panel" src="panel.html" style="width: 250px; height: 100%; border-right: 1px solid #ccc; float:right;"></iframe> -->
 
+
+  <!-- Side Panel Toggle Button (top right) -->
+  <button id="sidePanelToggle" class="btn btn-outline-light btn-sm" style="position: fixed; top: 20px; right: 20px; z-index: 1000;" title="Toggle Side Panel">
+    <i class="bi bi-layout-sidebar-reverse"></i>
+  </button>
 
   <!-- Weather (top center) -->
   <div id="weatherTop" class="weather-top text-center">
@@ -34,7 +39,10 @@
   <main class="center-stage">
     <div id="mini-date">—</div>
     <div class="clock" id="clock">--:-- <span class="ampm">AM</span></div>
-    <h2 class="tagline" id="tagline">Strategy, Execution, and Metrics</h2>    
+    <h2 class="tagline" id="tagline">Strategy, Execution, and Metrics</h2>
+    
+    <!-- US Market Data -->
+    <div id="us-markets" class="market-data"></div>
   </main>
 
   <!-- Bottom-centered combined panel: To-Do (left) and RSS (right) -->
@@ -88,6 +96,9 @@
   <!-- Bootstrap JS from CDN -->
   <script src="/vendor/bootstrap/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous" defer></script>
 
+  <!-- Config (API keys) -->
+  <script src="config.js"></script>
+  
   <!-- App script -->
   <script src="main.js" defer></script>
 </body>

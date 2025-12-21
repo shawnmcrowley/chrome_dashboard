@@ -114,6 +114,43 @@ body{
   pointer-events: auto;
 }
 
+/* market data */
+.market-data {
+  margin-top: 16px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 42;
+}
+.market-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.market-symbol {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.market-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.market-change {
+  font-size: 12px;
+  font-weight: 600;
+}
+.market-change.positive { color: #60d9c9; }
+.market-change.negative { color: #ff6b6b; }
+
 /* admin links */
 .admin-links {
   pointer-events: auto !important;
