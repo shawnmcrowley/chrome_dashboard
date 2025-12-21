@@ -9,8 +9,8 @@
 
 /* ====== CONFIG ====== */
 // API keys are loaded from config.js (gitignored)
-const OPENWEATHER_KEY = typeof CONFIG !== 'undefined' ? CONFIG.OPENWEATHER_KEY : '2bf04e8277778f46ddf9004b95603974';
-const ALPHA_VANTAGE_KEY = typeof CONFIG !== 'undefined' ? CONFIG.ALPHA_VANTAGE_KEY : '2M63E1F8KYYGRI3Z';
+const OPENWEATHER_KEY = typeof CONFIG !== 'undefined' ? CONFIG.OPENWEATHER_KEY : '';
+const ALPHA_VANTAGE_KEY = typeof CONFIG !== 'undefined' ? CONFIG.ALPHA_VANTAGE_KEY : 'demo';
 const DEFAULT_FEEDS = ['https://www.makeuseof.com/feed/'];
 const US_INDICES = [
   { symbol: 'SPY', name: 'S&P 500', multiplier: 10.0 },   // SPY * 10 ≈ S&P 500 index
