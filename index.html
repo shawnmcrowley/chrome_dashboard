@@ -16,10 +16,7 @@
 </head>
 <body>
   <div id="page-overlay" aria-hidden="true"></div>
-
-  <!-- Side Panel -->
-  <!-- <iframe id="panel" src="panel.html" style="width: 250px; height: 100%; border-right: 1px solid #ccc; float:right;"></iframe> -->
-
+ 
 
   <!-- Side Panel Toggle Button (top right) -->
   <button id="sidePanelToggle" class="btn btn-outline-light btn-sm" style="position: fixed; top: 20px; right: 20px; z-index: 1000;" title="Toggle Side Panel">
@@ -60,9 +57,9 @@
 
       <ul id="todoList" class="list-group list-group-flush mb-1 todo-list"></ul>
 
-      <div class="d-flex gap-2 mt-2">
-        <button id="clearCompleted" class="btn btn-outline-light btn-sm">Clear Completed</button>
-        <button id="toggleDoneView" class="btn btn-outline-light btn-sm ms-auto">Hide Completed</button>
+      <div class="d-flex gap-2 mt-2 justify-content-end">
+        <button id="clearCompleted" class="btn btn-outline-light btn-sm" title="Clear completed tasks"><i class="bi bi-trash"></i></button>
+        <button id="toggleDoneView" class="btn btn-outline-light btn-sm" title="Hide completed tasks"><i class="bi bi-eye-slash"></i></button>
       </div>
     </div>
 
@@ -76,7 +73,7 @@
 
       <div class="d-flex mb-2 gap-2">
         <input id="rssUrl" class="form-control form-control-sm" placeholder="Add RSS Feed URL" aria-label="Feed URL">
-        <button id="addRss" class="btn btn-sm" type="button" title="Add feed"><i class="bi bi-plus-lg"></i></button>
+        <button id="addRss" class="btn btn-sm" type="button" title="Add Feed"><i class="bi bi-plus-lg"></i></button>
       </div>
 
       <!-- small note area used to show when a proxy fallback was used / errors -->

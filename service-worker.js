@@ -25,6 +25,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log('Message received:', message);
+  
   if (message.action === 'openSidePanel') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]) {
@@ -32,5 +33,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         chrome.sidePanel.open({ windowId: tabs[0].windowId });
       }
     });
+  } else if (message.action === 'dockerContainers') {
+    // Fetch docker containers from localhost:2375
+    fetch('http://localhost:2375/containers/json?all=1')
+      .then(r => r.json())
+      .then(data => {
+        console.log('Docker containers fetched:', data);
+        sendResponse({ok: true, data});
+      })
+      .catch(err => {
+        console.error('Docker fetch error:', err);
+        sendResponse({ok: false, error: err.message});
+      });
+    
+    // Return true to keep the message channel open for async response
+    return true;
   }
 });

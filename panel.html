@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Dashboard Panel</title>
@@ -14,19 +15,22 @@
       width: 280px;
       margin: 0 auto;
     }
+
     h1 {
       color: var(--text);
       margin-bottom: 20px;
       font-size: 1.2rem;
       text-align: center;
     }
+
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.006));
       border: 1px solid var(--panel-border);
       border-radius: 14px;
       padding: 16px;
       width: 100%;
     }
+
     .btn {
       display: block;
       width: 100%;
@@ -39,19 +43,30 @@
     }
   </style>
 </head>
+
 <body>
   <h1>Utility Panel</h1>
 
   <!-- ==================== Utilities ==================== -->
   <section class="card">
-   <div class="d-flex flex-column gap-2">
-        <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy Dashboard</a>
-        <a href="http://localhost:5050" class="btn btn-sm btn-outline-light" target="_blank">Postgres Admin Console</a>
-        <a href="http://localhost:8080" class="btn btn-sm btn-outline-light" target="_blank">WebUI for LLM</a>
-        <a href="http://localhost:5678" class="btn btn-sm btn-outline-light" target="_blank">N8N Workflow</a>
-        <a href="https://localhost" class="btn btn-sm btn-outline-light" target="_blank">Main Application Dashboard</a>
-        <a href="https://myapps.microsoft.com/" class="btn btn-sm btn-outline-light" target="_blank">Microsoft Applications</a>
-      </div>
+    <div class="d-flex flex-column gap-2">
+      <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy
+        Dashboard</a>
+      <a href="http://localhost:5050" class="btn btn-sm btn-outline-light" target="_blank">Postgres Admin Console</a>
+      <a href="http://localhost:8080" class="btn btn-sm btn-outline-light" target="_blank">WebUI for LLM</a>
+      <a href="http://localhost:5678" class="btn btn-sm btn-outline-light" target="_blank">N8N Workflow</a>
+      <a href="https://localhost" class="btn btn-sm btn-outline-light" target="_blank">Main Application Dashboard</a>
+      <a href="https://myapps.microsoft.com/" class="btn btn-sm btn-outline-light" target="_blank">Microsoft
+        Applications</a>
+    </div>
+    <!-- Docker Stats Section -->
+    <div class="card" style="margin-top: 16px;">
+      <h2 style="margin: 0 0 12px 0; font-size: 13px; color: var(--text); font-weight: 600; text-align: center;">Docker Container Statistics</h2>
+      <pre id="docker-stats" style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px; margin: 0; font-size: 11px; text-align: left; line-height: 1.4;"></pre>
+    </div>
   </section>
-  </body>
+  <script src="main.js"></script>
+  <script src="panel.js"></script>
+</body>
+
 </html>

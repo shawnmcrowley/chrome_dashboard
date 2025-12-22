@@ -288,6 +288,7 @@ body{
   gap: 10px;
   max-height: 340px; /* same height as todo-list */
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 8px;
 }
 
@@ -300,17 +301,19 @@ body{
   background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
   border:1px solid rgba(255,255,255,0.02);
   box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
 }
 
 /* thumbnail */
-.rss-thumb { width:96px; height:64px; overflow:hidden; border-radius:6px; background:#0b1116; flex:0 0 96px; display:inline-flex; align-items:center; justify-content:center; }
+.rss-thumb { width:80px; height:54px; overflow:hidden; border-radius:6px; background:#0b1116; flex:0 0 80px; display:inline-flex; align-items:center; justify-content:center; }
 .rss-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
 
 /* rss body */
-.rss-body { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:6px; }
-.rss-title { font-weight:700; color:#ffffff; text-decoration:none; font-size:14px; }
-.rss-meta { color: var(--muted); font-size:12px; }
-.rss-excerpt { color: rgba(234,246,243,0.85); font-size:13px; line-height:1.3; }
+.rss-body { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:6px; overflow: hidden; }
+.rss-title { font-weight:700; color:#ffffff; text-decoration:none; font-size:14px; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.3; }
+.rss-meta { color: var(--muted); font-size:12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rss-excerpt { color: rgba(234,246,243,0.85); font-size:13px; line-height:1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ensure list colors override bootstrap */
 .list-group-item, .rss-item, .todo-text, .rss-title { color: var(--text) !important; }
@@ -323,9 +326,10 @@ body{
 @media (max-width: 900px) {
   .bottom-panel { flex-direction: column; width: calc(100% - 40px); padding: 12px; }
   .panel-section { width:100%; }
-  .rss-list { max-height: 260px; }
+  .rss-list { max-height: 260px; overflow-y: auto; overflow-x: hidden; }
   .todo-list { max-height: 260px; }
   .clock { font-size: var(--clock-size-mobile); }
   .clock .ampm { font-size: .38em; padding: 5px 8px; margin-left: 8px; }
   #mini-date { font-size: 13px; margin-bottom: 6px; }
+  .rss-thumb { width: 60px; height: 40px; flex: 0 0 60px; }
 }

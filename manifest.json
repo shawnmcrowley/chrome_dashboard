@@ -44,7 +44,7 @@
   },
 
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https: https://api.openweathermap.org https://www.alphavantage.co https://ipapi.co https://ipinfo.io;"
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' https: data:; connect-src 'self' https: http://localhost:2375 http://127.0.0.1:2375 https://api.openweathermap.org https://www.alphavantage.co https://ipapi.co https://ipinfo.io;"
   },
   "minimum_chrome_version": "110"
 }
