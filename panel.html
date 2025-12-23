@@ -52,6 +52,7 @@
     <div class="d-flex flex-column gap-2">
       <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy
         Dashboard</a>
+      <a href="http://localhost:9000" class="btn btn-sm btn-outline-light" target="_blank">Docker Management</a>
       <a href="http://localhost:5050" class="btn btn-sm btn-outline-light" target="_blank">Postgres Admin Console</a>
       <a href="http://localhost:8080" class="btn btn-sm btn-outline-light" target="_blank">WebUI for LLM</a>
       <a href="http://localhost:5678" class="btn btn-sm btn-outline-light" target="_blank">N8N Workflow</a>
@@ -61,8 +62,10 @@
     </div>
     <!-- Docker Stats Section -->
     <div class="card" style="margin-top: 16px;">
-      <h2 style="margin: 0 0 12px 0; font-size: 13px; color: var(--text); font-weight: 600; text-align: center;">Docker Container Statistics</h2>
-      <pre id="docker-stats" style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px; margin: 0; font-size: 11px; text-align: left; line-height: 1.4;"></pre>
+      <h2 style="margin: 0 0 12px 0; font-size: 15px; color: var(--text); font-weight: 600; text-align: center;">Docker
+        Container Statistics</h2>
+      <pre id="docker-stats"
+        style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px; margin: 0; font-size: 11px; text-align: left; line-height: 1.4; max-height: 300px; overflow-y: auto;"></pre>
     </div>
   </section>
   <script src="main.js"></script>
