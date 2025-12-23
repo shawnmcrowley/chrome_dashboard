@@ -29,6 +29,8 @@
       border-radius: 14px;
       padding: 16px;
       width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .btn {
@@ -40,6 +42,7 @@
       margin-bottom: 8px;
       padding: 6px 12px !important;
       font-size: 12px !important;
+      box-sizing: border-box;
     }
   </style>
 </head>
@@ -61,7 +64,7 @@
         Applications</a>
     </div>
     <!-- Docker Stats Section -->
-    <div class="card" style="margin-top: 16px;">
+    <div style="margin-top: 16px;">
       <h2 style="margin: 0 0 12px 0; font-size: 15px; color: var(--text); font-weight: 600; text-align: center;">Docker
         Container Statistics</h2>
       <pre id="docker-stats"

@@ -122,6 +122,9 @@ body{
   justify-content: center;
   pointer-events: auto;
   z-index: 42;
+  flex-wrap: wrap;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .market-item {
   display: flex;
@@ -132,6 +135,7 @@ body{
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.05);
+  box-sizing: border-box;
 }
 .market-symbol {
   font-size: 11px;
@@ -199,6 +203,7 @@ body{
   gap: 10px;
   box-sizing: border-box;
   max-height: 480px; /* ensure the whole panel has an upper bound */
+  overflow: hidden;
 }
 
 /* divider (visual) */
@@ -324,12 +329,54 @@ body{
 
 /* ---------- Responsive adjustments ---------- */
 @media (max-width: 900px) {
-  .bottom-panel { flex-direction: column; width: calc(100% - 40px); padding: 12px; }
-  .panel-section { width:100%; }
+  .bottom-panel { 
+    flex-direction: column; 
+    width: calc(100% - 40px); 
+    padding: 12px;
+    gap: 12px;
+  }
+  .panel-section { 
+    width: 100%; 
+    min-width: 0;
+    max-width: 100%;
+  }
   .rss-list { max-height: 260px; overflow-y: auto; overflow-x: hidden; }
   .todo-list { max-height: 260px; }
   .clock { font-size: var(--clock-size-mobile); }
   .clock .ampm { font-size: .38em; padding: 5px 8px; margin-left: 8px; }
   #mini-date { font-size: 13px; margin-bottom: 6px; }
   .rss-thumb { width: 60px; height: 40px; flex: 0 0 60px; }
+  .market-data { 
+    flex-wrap: wrap; 
+    gap: 10px;
+  }
+  .market-item {
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bottom-panel {
+    width: calc(100% - 20px);
+    padding: 10px;
+    bottom: 10px;
+  }
+  .panel-section {
+    padding: 12px;
+  }
+  .market-data {
+    gap: 8px;
+  }
+  .market-item {
+    padding: 4px 8px;
+  }
+  .market-price {
+    font-size: 14px;
+  }
+  .market-symbol {
+    font-size: 10px;
+  }
+  .market-change {
+    font-size: 11px;
+  }
 }
