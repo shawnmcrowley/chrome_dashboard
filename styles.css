@@ -7,8 +7,8 @@
   --accent-teal: #60d9c9;
   --accent-blue: #3aa6ff;
   --shadow-strong: rgba(0,0,0,0.7);
-  --clock-size-desktop: 6.5rem;
-  --clock-size-mobile: 4.0rem;
+  --clock-size-desktop: 4.5rem;
+  --clock-size-mobile: 3.0rem;
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color-scheme: dark;
 }
@@ -35,14 +35,14 @@ body{
 /* ---------- Top weather ---------- */
 .weather-top{
   position:fixed;
-  top:10px;
+  top:2px;
   left:50%;
   transform:translateX(-50%);
   z-index:140;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:6px;
+  gap:2px;
   pointer-events:none;
   text-align:center;
 }
@@ -54,8 +54,8 @@ body{
 .center-stage{
   position: absolute;
   left: 50%;
-  top: 18%; /* closer to top */
-  transform: translate(-50%, -18%);
+  top: 12%; /* closer to top */
+  transform: translate(-50%, -12%);
   z-index: 40; /* intentionally lower than bottom-panel */
   display:flex;
   flex-direction:column;
@@ -63,6 +63,7 @@ body{
   text-align:center;
   pointer-events: none; /* don't intercept clicks */
   width:100%;
+  max-width: 800px;
   box-sizing: border-box;
   padding: 0 20px;
 }
@@ -91,7 +92,7 @@ body{
 }
 .clock .ampm {
   display:inline-block;
-  margin-left:12px;
+  margin-left:6px;
   font-size:0.28em;
   font-weight:900;
   text-transform:uppercase;
@@ -116,9 +117,9 @@ body{
 
 /* market data */
 .market-data {
-  margin-top: 16px;
+  margin-top: 12px;
   display: flex;
-  gap: 20px;
+  gap: 12px;
   justify-content: center;
   pointer-events: auto;
   z-index: 42;
@@ -126,30 +127,61 @@ body{
   max-width: 100%;
   box-sizing: border-box;
 }
+@media (max-width: 1400px) {
+  .market-data {
+    gap: 8px;
+  }
+  .market-item {
+    padding: 4px 10px;
+  }
+  .market-price {
+    font-size: 12px;
+  }
+}
+@media (max-width: 1200px) {
+  .center-stage {
+    max-width: 600px;
+  }
+  .market-data {
+    gap: 6px;
+  }
+  .market-item {
+    padding: 4px 8px;
+  }
+  .market-symbol {
+    font-size: 9px;
+  }
+  .market-price {
+    font-size: 11px;
+  }
+  .market-change {
+    font-size: 10px;
+  }
+}
 .market-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 8px 16px;
+  gap: 2px;
+  padding: 6px 12px;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid rgba(255,255,255,0.05);
   box-sizing: border-box;
 }
 .market-symbol {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
 }
 .market-price {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
   color: #ffffff;
 }
 .market-change {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
 }
 .market-change.positive { color: #60d9c9; }
@@ -187,7 +219,6 @@ body{
   box-shadow: 0 20px 50px rgba(0,0,0,0.6);
   padding: 20px;
   box-sizing: border-box;
-  margin-top: -80px; /* pull panel closer to links */
 }
 
 /* panel sections */
@@ -202,7 +233,7 @@ body{
   flex-direction: column; /* important: stack header, input, list, footer */
   gap: 10px;
   box-sizing: border-box;
-  max-height: 480px; /* ensure the whole panel has an upper bound */
+  max-height: 560px; /* ensure the whole panel has an upper bound */
   overflow: hidden;
 }
 
@@ -248,7 +279,7 @@ body{
   border-radius: 6px;
   padding: 6px;
   min-height: 56px;
-  max-height: 340px;    /* same max-height as RSS list for parity */
+  max-height: 420px;    /* same max-height as RSS list for parity */
   overflow-y: auto;     /* enable vertical scrolling when items exceed height */
   box-sizing: border-box;
 }
@@ -291,7 +322,7 @@ body{
   display:flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 340px; /* same height as todo-list */
+  max-height: 420px; /* same height as todo-list */
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 8px;
@@ -329,6 +360,11 @@ body{
 
 /* ---------- Responsive adjustments ---------- */
 @media (max-width: 900px) {
+  .center-stage {
+    top: 8%;
+    transform: translate(-50%, -8%);
+    max-width: 500px;
+  }
   .bottom-panel { 
     flex-direction: column; 
     width: calc(100% - 40px); 
