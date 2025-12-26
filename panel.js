@@ -16,6 +16,23 @@ Reload Docker:
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
+Look for a hosts Configuration Conflict:
+A common issue is that the default systemd unit file specifies a host flag (e.g., -H fd:// or -H unix:///var/run/docker.sock), which conflicts if you also have a hosts entry in your daemon.json.
+If this is the case, you need to tell systemd to ignore its default host configuration. You can do this by creating a systemd override file.
+
+Run sudo systemctl edit docker.service to create an override file (drop-in file) and add the following content to clear the ExecStart argument:
+
+ini
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd
+
+After saving the file, reload the systemd daemon and restart the Docker service:
+bash
+sudo systemctl daemon-reload
+sudo systemctl restart docker.service
+The daemon should now use only the configuration from your daemon.json file.
+
 Verify it's listening:
 
 curl http://localhost:2375/containers/json
