@@ -17,6 +17,8 @@
 <body>
   <div id="page-overlay" aria-hidden="true"></div>
  
+  <!-- Tagline at top of page -->
+  <header id="pageTagline" class="page-tagline">Strategy, Execution and Metrics</header>
 
   <!-- Side Panel Toggle Button (top right) -->
   <button id="sidePanelToggle" class="btn btn-outline-light btn-sm" style="position: fixed; top: 20px; right: 20px; z-index: 1000;" title="Toggle Side Panel">
@@ -25,20 +27,41 @@
 
   <!-- Weather (top center) -->
   <div id="weatherTop" class="weather-top text-center">
-    <div class="d-flex align-items-center justify-content-center gap-2">
-      <div id="weatherIcon" aria-hidden="true">🌙</div>
-      <div id="mini-weather" class="fw-bold">--°</div>
+    <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+      <!-- Local weather -->
+      <div class="mini-weather-block">
+        <div class="d-flex align-items-center justify-content-center gap-2">
+          <div id="weatherIcon-local" aria-hidden="true">🌙</div>
+          <div id="mini-weather-local" class="fw-bold">--°</div>
+        </div>
+        <div id="mini-location-local">West Chester</div>
+        <div id="mini-datetime-local" class="mini-datetime">—</div>
+      </div>
+
+      <!-- New Delhi weather -->
+      <div class="mini-weather-block">
+        <div class="d-flex align-items-center justify-content-center gap-2">
+          <div id="weatherIcon-delhi" aria-hidden="true">🌙</div>
+          <div id="mini-weather-delhi" class="fw-bold">--°</div>
+        </div>
+        <div id="mini-location-delhi">New Delhi</div>
+        <div id="mini-datetime-delhi" class="mini-datetime">—</div>
+      </div>
+
+      <!-- Ireland weather -->
+      <div class="mini-weather-block">
+        <div class="d-flex align-items-center justify-content-center gap-2">
+          <div id="weatherIcon-ireland" aria-hidden="true">🌙</div>
+          <div id="mini-weather-ireland" class="fw-bold">--°</div>
+        </div>
+        <div id="mini-location-ireland">Ireland</div>
+        <div id="mini-datetime-ireland" class="mini-datetime">—</div>
+      </div>
     </div>
-    <div id="mini-location">—</div>
   </div>
 
-  <!-- Center content: date, big clock + tagline -->
+  <!-- Center content: US Market Data only -->
   <main class="center-stage">
-    <div id="mini-date">—</div>
-    <div class="clock" id="clock">--:-- <span class="ampm">AM</span></div>
-    <h2 class="tagline" id="tagline">Strategy, Execution, and Metrics</h2>
-    
-    <!-- US Market Data -->
     <div id="us-markets" class="market-data"></div>
   </main>
 

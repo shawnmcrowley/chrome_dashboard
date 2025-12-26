@@ -35,7 +35,7 @@ body{
 /* ---------- Top weather ---------- */
 .weather-top{
   position:fixed;
-  top:2px;
+  top:52px;
   left:50%;
   transform:translateX(-50%);
   z-index:140;
@@ -48,6 +48,22 @@ body{
 }
 #mini-weather { font-weight:700; font-size:15px; padding:4px 8px; border-radius:8px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008)); }
 #mini-location { font-size:12px; color:var(--muted); }
+.mini-weather-block { margin: 0 4px; }
+.mini-datetime { font-size: 11px; color: var(--muted); }
+
+/* Tagline at top of page */
+.page-tagline {
+  position: fixed;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f6fbfb;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.65);
+  pointer-events: none;
+}
 
 /* ---------- Center stage (clock & date & tagline) ---------- */
 /* Put the center-stage above background but below the bottom panel so it won't cover panels */
@@ -103,6 +119,26 @@ body{
   vertical-align: middle;
   box-shadow: 0 8px 18px rgba(0,0,0,0.5);
 }
+.small-clocks {
+  margin-top: 6px;
+  pointer-events: auto;
+  flex-wrap: wrap;
+}
+.small-clock {
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
+}
+.small-clock .ampm {
+  font-size: 0.4em;
+  padding: 4px 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.clock-label {
+  margin-left: 6px;
+  font-size: 0.45em;
+  font-weight: 600;
+  color: var(--muted);
+}
 
 /* tagline (allow pointer events for small interactions) */
 .tagline {
@@ -117,7 +153,7 @@ body{
 
 /* market data */
 .market-data {
-  margin-top: 12px;
+  margin-top: 40px;
   display: flex;
   gap: 12px;
   justify-content: center;
@@ -396,6 +432,9 @@ body{
     width: calc(100% - 20px);
     padding: 10px;
     bottom: 10px;
+  }
+.page-tagline {
+    font-size: 1.2rem;
   }
   .panel-section {
     padding: 12px;
