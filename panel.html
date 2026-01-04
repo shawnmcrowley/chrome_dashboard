@@ -48,10 +48,9 @@
 </head>
 
 <body>
-  <h1>Utility Panel</h1>
-
-  <!-- ==================== Utilities ==================== -->
+    <!-- ==================== Utilities ==================== -->
   <section class="card">
+    <h2 style="margin: 0 0 12px 0; font-size: 15px; color: var(--text); font-weight: 600; text-align: center;">Utility Panel</h2>
     <div class="d-flex flex-column gap-2">
       <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy
         Dashboard</a>
@@ -63,13 +62,13 @@
       <a href="https://myapps.microsoft.com/" class="btn btn-sm btn-outline-light" target="_blank">Microsoft
         Applications</a>
     </div>
-    <!-- Docker Stats Section -->
-    <div style="margin-top: 16px;">
-      <h2 style="margin: 0 0 12px 0; font-size: 15px; color: var(--text); font-weight: 600; text-align: center;">Docker
-        Container Statistics</h2>
-      <pre id="docker-stats"
-        style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px; margin: 0; font-size: 11px; text-align: left; line-height: 1.4; max-height: 300px; overflow-y: auto;"></pre>
-    </div>
+  </section>
+
+  <!-- Docker Stats Section -->
+  <section class="card" style="margin-top: 16px;">
+    <h2 style="margin: 0 0 12px 0; font-size: 15px; color: var(--text); font-weight: 600; text-align: center;">Container Statistics</h2>
+    <pre id="docker-stats"
+      style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px; margin: 0; font-size: 11px; text-align: left; line-height: 1.4; max-height: 400px; overflow-y: auto;"></pre>
   </section>
   <script src="main.js"></script>
   <script src="panel.js"></script>

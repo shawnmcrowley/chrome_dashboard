@@ -81,7 +81,17 @@ async function updateDockerStats() {
     for (const container of containers) { // Show all containers
       const name = container.Names?.[0]?.replace(/^\/+/, '') || container.Id.slice(0, 12);
       const status = container.State;
-      statsText += `${name}\n  Status: ${status}\n  Image: ${container.Image}\n\n`;
+      const mounts = container.Mounts || [];
+      const volumes = mounts.map(mount => {
+        if (mount.Type === 'volume') {
+          return `${mount.Name || mount.Source}`;
+        } else if (mount.Type === 'bind') {
+          return `${mount.Source}:${mount.Destination}`;
+        }
+        return `${mount.Source || mount.Destination}`;
+      }).join(', ') || 'None';
+      
+      statsText += `${name}\n  Status: ${status}\n  Image: ${container.Image}\n  Volumes: ${volumes}\n\n`;
     }
     
     document.getElementById('docker-stats').textContent = statsText || 'No containers running';
