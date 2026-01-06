@@ -5,52 +5,12 @@
   <meta charset="UTF-8">
   <title>Dashboard Panel</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      padding: 20px;
-      background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 280px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      color: var(--text);
-      margin-bottom: 20px;
-      font-size: 1.2rem;
-      text-align: center;
-    }
-
-    .card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.006));
-      border: 1px solid var(--panel-border);
-      border-radius: 14px;
-      padding: 16px;
-      width: 100%;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .btn {
-      display: block;
-      width: 100%;
-      text-align: center;
-      text-decoration: none !important;
-      border-radius: 8px !important;
-      margin-bottom: 8px;
-      padding: 6px 12px !important;
-      font-size: 12px !important;
-      box-sizing: border-box;
-    }
-  </style>
 </head>
 
 <body>
     <!-- ==================== Utilities ==================== -->
   <section class="card">
-    <h2 style="margin: 0 0 12px 0; font-size: 15px; color: var(--text); font-weight: 600; text-align: center;">Utility Panel</h2>
+    <h2 class="panel-section-title">Utility Panel</h2>
     <div class="d-flex flex-column gap-2">
       <a href="http://localhost:8888/dashboard/" class="btn btn-sm btn-outline-light" target="_blank">Proxy
         Dashboard</a>
@@ -65,10 +25,10 @@
   </section>
 
   <!-- Docker Stats Section -->
-  <section class="card" style="margin-top: 16px;">
-    <h2 style="margin: 0 0 12px 0; font-size: 15px; color: var(--text); font-weight: 600; text-align: center;">Container Statistics</h2>
+  <section class="card docker-section">
+    <h2 class="panel-section-title">Container Statistics</h2>
     <pre id="docker-stats"
-      style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 12px; margin: 0; font-size: 11px; text-align: left; line-height: 1.4; max-height: 400px; overflow-y: auto;"></pre>
+      class="docker-stats">No containers running</pre>
   </section>
   <script src="main.js"></script>
   <script src="panel.js"></script>
