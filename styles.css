@@ -381,8 +381,8 @@ body{
 /* Todo item text readable */
 .todo-text {
   color: var(--text) !important;
-  font-weight: 500;
-  font-size: 0.875rem;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 /* Meta/time for todo */
@@ -436,7 +436,7 @@ body{
 .rss-body { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:6px; overflow: hidden; }
 .rss-title { font-weight:700; color:#ffffff; text-decoration:none; font-size:14px; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.3; }
 .rss-meta { color: var(--muted); font-size:12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rss-excerpt { color: rgba(234,246,243,0.85); font-size:13px; line-height:1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rss-excerpt { color: rgba(234,246,243,0.85); font-size:14px; line-height:1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ensure list colors override bootstrap */
 .list-group-item, .rss-item, .todo-text, .rss-title { color: var(--text) !important; }
