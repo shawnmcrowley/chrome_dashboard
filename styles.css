@@ -382,6 +382,7 @@ body{
 .todo-text {
   color: var(--text) !important;
   font-weight: 500;
+  font-size: 0.875rem;
 }
 
 /* Meta/time for todo */
